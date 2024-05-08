@@ -1,6 +1,7 @@
 package cz.rodr.cards.controller;
 
 import cz.rodr.cards.constants.CardConstants;
+import cz.rodr.cards.dto.CardContactInfoDto;
 import cz.rodr.cards.dto.CardDto;
 import cz.rodr.cards.dto.ErrorResponseDto;
 import cz.rodr.cards.dto.ResponseDto;
@@ -14,11 +15,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Tag(
         name = "CRUD REST API for Cards in EazyBank.",
@@ -26,11 +32,26 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
+//@AllArgsConstructor
 @Validated
 public class CardController {
 
     private ICardService iCardService;
+
+    public CardController(ICardService iCardService) {
+        this.iCardService = iCardService;
+    }
+
+    // reading properties method n. 1
+    @Value("${build.version}")
+    private String buildVersion;
+
+    // reading properties method n. 2
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private CardContactInfoDto cardContactInfoDto;
 
     @Operation(
             summary = "Create Card REST API",
@@ -140,5 +161,80 @@ public class CardController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(CardConstants.STATUS_417, CardConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    // reading properties using @Value annotated field (from application.yml)
+    @Operation(
+            summary = "Get build information REST API",
+            description = "REST API to get build information that is deployed into cards microservice"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )}
+    )
+    @GetMapping("/build-info")
+    public ResponseEntity<String> getBuildInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
+    }
+
+    // reading properties using Environment interface field (from local environment variables)
+    @Operation(
+            summary = "Get Java version REST API",
+            description = "REST API to get Java version that is installed into cards microservice"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )}
+    )
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    // reading properties using @ConfigurationProperties annotation (from application.yml + AccountsContactInfoDto class)
+    @Operation(
+            summary = "Get contact info REST API",
+            description = "REST API to get contact on cards microservice developer"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "HTTP Status OK"
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "HTTP Status Internal Server Error",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponseDto.class)
+                    )
+            )}
+    )
+    @GetMapping("/contact-info")
+    public ResponseEntity<Map<String, String>> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(cardContactInfoDto.contactDetails());
     }
 }

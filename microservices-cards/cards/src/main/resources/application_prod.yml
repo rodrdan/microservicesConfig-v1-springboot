@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to EazyBank cards related production APIs"
+  contactDetails:
+    name: "Cody Carrd - Operations Engineer"
+    email: "cody@eazybank.com"
+  onCallSupport:
+    - (555) 666-4567
+    - (555) 666-7654

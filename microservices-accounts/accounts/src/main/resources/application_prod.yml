@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "3.0"
+
+accounts:
+  message: "Welcome to EazyBank accounts related production APIs"
+  contactDetails:
+    name: "Misty Day - Operations Engineer"
+    email: "misty@eazybank.com"
+  onCallSupport:
+    - (555) 555-4567
+    - (555) 555-7654

@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "3.0"
+
+loans:
+  message: "Welcome to EazyBank loans related production APIs"
+  contactDetails:
+    name: "Luana Gold - Operations Engineer"
+    email: "luana@eazybank.com"
+  onCallSupport:
+    - (555) 777-4567
+    - (555) 777-7654

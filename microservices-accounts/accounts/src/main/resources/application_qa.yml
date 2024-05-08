@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+accounts:
+  message: "Welcome to EazyBank accounts related QA APIs"
+  contactDetails:
+    name: "Rick Morty - QA Lead"
+    email: "rick@eazybank.com"
+  onCallSupport:
+    - (555) 555-7890
+    - (555) 555-0987
